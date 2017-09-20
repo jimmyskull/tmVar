@@ -1,0 +1,16 @@
+#===Annotation
+#Attribution setting:
+#open: True
+#close: False
+
+Variation sequence types:
+ProteinMutation = True
+DNAMutation = True
+SNP = True
+
+Substitution = True
+Deletion = True
+Insertion = True
+Frameshift = True
+Duplication = True
+INDEL = True
