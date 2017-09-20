@@ -21,56 +21,56 @@ sub ME
 	{
 		if(-e $input)
 		{
-			
+
 			if($format eq "BioC")
 			{
-				require 'lib/ExtractFeature_BioC.pm';
+				require './lib/ExtractFeature_BioC.pm';
 				ME::ExtractFeature_BioC($input,"tmp/".$filename.".data","tmp/location_".$filename.".data");
 			}
 			else
 			{
-				require 'lib/ExtractFeature.pm';
+				require './lib/ExtractFeature.pm';
 				ME::ExtractFeature_PubTator($input,"tmp/".$filename.".data","tmp/location_".$filename.".data");
 			}
 			close input;
-		
+
 			if($^O=~/Win/)
 			{
-				open(CRF,"|CRF/crf_test -m CRF/MentionExtractionUB.Model -o tmp/".$filename.".output tmp/".$filename.".data")|| die ("\nAn Error in CRF module. \nPlease re-install CRF module:\n\n\tsh Installation.sh\n\n");	close(CRF);
+				open(CRF,"|crf_test -m CRF/MentionExtractionUB.Model -o tmp/".$filename.".output tmp/".$filename.".data")|| die ("\nAn Error in CRF module. \nPlease re-install CRF module:\n\n\tsh Installation.sh\n\n");	close(CRF);
 				close CRF;
 			}
 			else
 			{
-				open(CRF,"|./CRF/crf_test -m CRF/MentionExtractionUB.Model -o tmp/".$filename.".output tmp/".$filename.".data")|| die ("\nAn Error in CRF module. \nPlease re-install CRF module:\n\n\tsh Installation.sh\n\n");	close(CRF);
+				open(CRF,"|crf_test -m CRF/MentionExtractionUB.Model -o tmp/".$filename.".output tmp/".$filename.".data")|| die ("\nAn Error in CRF module. \nPlease re-install CRF module:\n\n\tsh Installation.sh\n\n");	close(CRF);
 				close CRF;
 			}
-			
+
 			if($format eq "BioC")
 			{
-				require 'lib/Translation_BioC.pm';
+				require './lib/Translation_BioC.pm';
 				ME::Translation_BioC($input,"tmp/".$filename.".output","tmp/location_".$filename.".data","tmp/".$filename.".ME");
 			}
 			else
 			{
-				require 'lib/Translation.pm';
+				require './lib/Translation.pm';
 				ME::Translation_PubTator($input,"tmp/".$filename.".output","tmp/location_".$filename.".data","tmp/".$filename.".ME");
 			}
 
-			require 'lib/PostProcessing.pm';
+			require './lib/PostProcessing.pm';
 			ME::PostProcessing("tmp/".$filename.".ME","tmp/".$filename.".PostME",$RegEx);
 			ME::ExtractStateFeature("tmp/".$filename.".PostME","tmp/".$filename.".PostME.data",$filename);
-			
+
 			if($format eq "BioC")
 			{
-				require 'lib/OutputFormat_BioC.pm';
+				require './lib/OutputFormat_BioC.pm';
 				ME::OutputFormat_BioC($input,"tmp/".$filename.".PostME","tmp/".$filename.".PostME.output",$output_route."/".$filename.".BioC.xml",$setup);
 			}
 			else
 			{
-				require 'lib/OutputFormat.pm';
+				require './lib/OutputFormat.pm';
 				ME::OutputFormat_PubTator("tmp/".$filename.".PostME","tmp/".$filename.".PostME.output",$output_route."/".$filename.".PubTator",$setup);
 			}
-			
+
 			open clear,"|rm tmp/*".$filename."*";	close clear;
 			#open clear,"|rm input/".$filename;	close clear;
 
@@ -118,7 +118,7 @@ sub main
 		}
 	}
 	my %setup_hash=();
-	
+
 	if($folder_route eq "")
 	{
 		print "Instruction Format:\n\n\tperl tmVar.pl -i [input dir] -o [output dir] -s [setup]\n";
@@ -138,7 +138,7 @@ sub main
 		}
 		$setup_hash{"Mutation_Extraction"} = "True";
 		my $RegEx="RegEx/RegEx.NL";
-		
+
 		#=====
 		#tmVar processing
 		opendir(DIR, $folder_route);
@@ -159,8 +159,8 @@ sub main
 			close input;
 			if($checkformat==0){print "Format Error. It should follow PubTator/BioC format.\n";exit;}
 			elsif($format eq "BioC") {print "Input format: BioC\n";}
-			elsif($format eq "PubTator") 
-			{	
+			elsif($format eq "PubTator")
+			{
 				my $pmid="";
 				my $cut=0;
 				open input,"<".$folder_route."/".$filename;
@@ -188,10 +188,10 @@ sub main
 					}
 				}
 				close input;
-				
+
 				print "Input format: PubTator\n";
 			}
-			
+
 			open input,"<".$folder_route."/".$filename;
 			while(<input>)
 			{
@@ -209,9 +209,9 @@ sub main
 				}
 			}
 			close input;
-		
+
 			my ($sec1,$min1,$hour1,$day1,$mon,$year)=localtime(time);
-			
+
 			#=====
 			#Mutation Extraction
 			if($^O=~/Win/ && $format eq "BioC")
@@ -219,9 +219,9 @@ sub main
 				print "Running tmVar on $countX docs in $filename ... Failed: BioC format is not workable for ".$^O.".                    \n";
 			}
 			else
-			{	
+			{
 				ME($folder_route."/".$filename,$filename,$output_route,$RegEx,$setup_hash{"Mutation_Extraction"},$setup,$format);
-				
+
 				my ($sec2,$min2,$hour2,$day2,$mon,$year)=localtime(time);
 				$hour1=$hour1+$day1*24;
 				$hour2=$hour2+$day2*24;

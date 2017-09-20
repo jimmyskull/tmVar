@@ -6,7 +6,7 @@
 
 package ME;
 
-use encoding 'big5', STDIN => 'big5', STDOUT => 'big5';
+use utf8;
 
 sub OutputFormat_PubTator
 {
@@ -14,7 +14,7 @@ sub OutputFormat_PubTator
 	my $CRF_output=$_[1];
 	my $PubTator_output=$_[2];
 	my $setup=$_[3];
-	
+
 	my %setup_hash=();
 	if($setup eq ""){$setup="setup.txt";}
 	open input,"<".$setup;
@@ -29,7 +29,7 @@ sub OutputFormat_PubTator
 	}
 	close input;
 
-	
+
 	my %output_hash=();
 	my $count=0;
 	open input,"<".$CRF_output;
@@ -41,7 +41,7 @@ sub OutputFormat_PubTator
 		$count++;
 	}
 	close input;
-	
+
 	my %STR_hash=();
 	my $str_count=1;
 	for(my $i=0;$i<$count;$i++)
@@ -50,7 +50,7 @@ sub OutputFormat_PubTator
 		my $mention_tmp="";
 		my %identifier_hash=();
 		my $prestate="";
-		
+
 		my $keepi=$i;
 		my $MW_right=0;
 		my $MW_left=10000;
@@ -71,7 +71,7 @@ sub OutputFormat_PubTator
 			$keepi++;
 			$output=$output_hash{$keepi};
 		}
-		
+
 		my $boundary=0;
 		my $WMstate="F";	#Forward
 		if($mention_tmp=~/^(.+?)(FOR|INPLACEOF|INSTEADOF|MUTANTOF|MUTANTSOF|RATHERTHAN|RATHERTHAN|REPLACEMENTOF|REPLACEMENTSOF|REPLACES|REPLACING|RESIDUEATPOSITION|RESIDUEFOR|RESIDUEINPLACEOF|RESIDUEINSTEADOF|SUBSTITUTIONAT|SUBSTITUTIONFOR|SUBSTITUTIONOF|SUBSTITUTIONSAT|SUBSTITUTIONSFOR|SUBSTITUTIONSOF|SUBSTITUTEDFOR|TOREPLACE)(.+)$/
@@ -86,7 +86,7 @@ sub OutputFormat_PubTator
 		}
 		$mention_tmp="";
 		my $start=0;
-		
+
 		$output=$output_hash{$i};
 		while($output=~/^([^\t]+).*([ATPWMFSDIR])$/)
 		{
@@ -104,7 +104,7 @@ sub OutputFormat_PubTator
 				{
 					if($start<=$boundary){$state="M";}
 					else{$state="W";}
-				}				
+				}
 				if($state ne $prestate && $identifier_hash{$state} ne "")
 				{
 					$identifier_hash{$state}=$identifier_hash{$state}.",".$mention;
@@ -129,22 +129,22 @@ sub OutputFormat_PubTator
 			$output=$output_hash{$i};
 			$prestate=$state;
 			$start=$start+length($mention);
-		}		
-		
+		}
+
 		my $translate="";
 		my $NotAaminoacid="";
-		
+
 		my %nametothree = (GUANINE => "G", ADENINE => "A", CYTOSINE => "C", THYMINE => "T", ALANINE => "ALA", ALANINE => "ALA", ALANINE => "ALA", ALANINE => "ALA", ALANINE => "ALA", ARGININE => "ARG", ASPARAGINE => "ASN", "ASPARTICACID" => "ASP", "ASPARTATE" => "ASP", CYSTEINE => "CYS", GLUTAMINE => "GLN", "GLUTAMICACID" => "GLU", GLYCINE => "GLY", HISTIDINE => "HIS", ISOLEUCINE => "ILE", LEUCINE => "LEU", LYSINE => "LYS", METHIONINE => "MET", PHENYLALANINE => "PHE", PROLINE => "PRO", SERINE => "SER", THREONINE => "THR", TRYPTOPHAN => "TRP", TYROSINE => "TYR", VALINE => "VAL", STOP => "XAA");
 		my %threetone = (ALA => "A", ARG => "R", ASN => "N", ASP => "D", CYS => "C", GLN => "Q", GLU => "E", GLY => "G", HIS => "H", ILE => "I", LEU => "L", LYS => "K", MET => "M", PHE => "F", PRO => "P", SER => "S", THR => "T", TRP => "W", TYR => "Y", VAL => "V", ASX => "B", GLX => "Z", XAA => "X",TER => "X");
-		
+
 		my @tmp=split(",",$identifier_hash{"M"});
 		$identifier_hash{"M"}="";
 		foreach my $tmp (@tmp)
 		{
-			if(exists $nametothree{$tmp})	
+			if(exists $nametothree{$tmp})
 			{
 				$tmp=$nametothree{$tmp};
-				$translate="Y";	
+				$translate="Y";
 			}
 			if($identifier_hash{"M"} eq ""){$identifier_hash{"M"}=$tmp;}
 			else{$identifier_hash{"M"}=$identifier_hash{"M"}.",".$tmp;}
@@ -153,10 +153,10 @@ sub OutputFormat_PubTator
 		$identifier_hash{"M"}="";
 		foreach my $tmp (@tmp)
 		{
-			if(exists $threetone{$tmp})	
-			{	
+			if(exists $threetone{$tmp})
+			{
 				$tmp=$threetone{$tmp};
-				$translate="Y";	
+				$translate="Y";
 			}
 			elsif(length($tmp)>1)
 			{
@@ -165,15 +165,15 @@ sub OutputFormat_PubTator
 			if($identifier_hash{"M"} eq ""){$identifier_hash{"M"}=$tmp;}
 			else{$identifier_hash{"M"}=$identifier_hash{"M"}.",".$tmp;}
 		}
-			
+
 		my @tmp=split(",",$identifier_hash{"W"});
 		$identifier_hash{"W"}="";
 		foreach my $tmp (@tmp)
 		{
-			if(exists $nametothree{$tmp})	
+			if(exists $nametothree{$tmp})
 			{
 				$tmp=$nametothree{$tmp};
-				$translate="Y";	
+				$translate="Y";
 			}
 			if($identifier_hash{"W"} eq ""){$identifier_hash{"W"}=$tmp;}
 			else{$identifier_hash{"W"}=$identifier_hash{"W"}.",".$tmp;}
@@ -182,10 +182,10 @@ sub OutputFormat_PubTator
 		$identifier_hash{"W"}="";
 		foreach my $tmp (@tmp)
 		{
-			if(exists $threetone{$tmp})	
-			{	
+			if(exists $threetone{$tmp})
+			{
 				$tmp=$threetone{$tmp};
-				$translate="Y";	
+				$translate="Y";
 			}
 			elsif(length($tmp)>1)
 			{
@@ -194,15 +194,15 @@ sub OutputFormat_PubTator
 			if($identifier_hash{"W"} eq ""){$identifier_hash{"W"}=$tmp;}
 			else{$identifier_hash{"W"}=$identifier_hash{"W"}.",".$tmp;}
 		}
-		
-		
+
+
 		if($identifier_hash{"A"} eq "CDNA"){	$identifier_hash{"A"}="c";	}
 		elsif($identifier_hash{"P"}=~/^[\+\-]/ && $identifier_hash{"A"} eq ""){	$identifier_hash{"A"}="c";	}
 		$identifier_hash{"A"}=lc($identifier_hash{"A"});
 		$identifier_hash{"F"}=~s/\*/X/g;
 		$identifier_hash{"R"}=lc($identifier_hash{"R"});
 		$identifier_hash{"R"}=~s/[\[\]]//g;
-		
+
 		if($identifier_hash{"P"}=~/^([0-9]+)\-([0-9]+)$/)
 		{
 			if($2>$1)
@@ -214,7 +214,7 @@ sub OutputFormat_PubTator
 		elsif($identifier_hash{"T"} eq "DELINS") {$identifier_hash{"T"}="INDEL";	$translate="N";}
 		elsif($identifier_hash{"T"}=~/INS.*DEL/) {$identifier_hash{"T"}="INDEL";	$translate="N";}
 		elsif($identifier_hash{"T"}=~/DEL.*INS/) {$identifier_hash{"T"}="INDEL";	$translate="N";}
-		
+
 		if($identifier_hash{"W"}=~/(.+),(.+)/ && ($identifier_hash{"M"} eq "" && $identifier_hash{"T"} eq ""))
 		{
 			$identifier_hash{"W"}=$1;
@@ -225,11 +225,11 @@ sub OutputFormat_PubTator
 			$identifier_hash{"W"}=$1;
 			$identifier_hash{"M"}=$2;
 		}
-		
+
 		$identifier_hash{"P"}=~s/[\-\[]+$//g;
 		$identifier_hash{"P"}=~s/^(POSITION|NUCLEOTIDE|\:)//g;
 		if($Type eq "ProteinMutation"){$identifier_hash{"P"}=~s/^CODON//g;}
-		
+
 		if($identifier_hash{"M"}=~/(DEL|INS|DUP)/)
 		{
 			$identifier_hash{"T"}=$identifier_hash{"M"};
@@ -240,7 +240,7 @@ sub OutputFormat_PubTator
 			$identifier_hash{"T"}=$identifier_hash{"W"};
 			$identifier_hash{"W"}="";
 		}
-		
+
 		#identifier
 		my $Type="";
 		my $identifier="";
@@ -273,7 +273,7 @@ sub OutputFormat_PubTator
 		{
 			$identifier=$identifier_hash{"A"}."|SUB|".$identifier_hash{"W"}."|".$identifier_hash{"P"}."|".$identifier_hash{"M"};
 		}
-		
+
 		#Type (ProteinMutation|DNAMutation|SNP)
 		if($Type eq "")
 		{
@@ -307,13 +307,13 @@ sub OutputFormat_PubTator
 			elsif($identifier_hash{"A"}=~/p/)
 			{
 				$Type="ProteinMutation";
-			}	
+			}
 		}
 		if($Type eq "ProteinMutation")
 		{
 			$identifier=~s/^[^\|]*\|/p\|/g;
 		}
-		
+
 		if(($identifier_hash{"M"} eq $identifier_hash{"W"}) && ($identifier_hash{"W"} ne "") && $Type eq "DNAMutation") # remove genotype
 		{
 		}
@@ -335,7 +335,7 @@ sub OutputFormat_PubTator
 		}
 		$str_count++;
 	}
-		
+
 	my %sentence_hash=();
 	my %article_hash=();
 	my %printSTR_hash=();
@@ -391,7 +391,7 @@ sub OutputFormat_PubTator
 					{
 						$id=$Infer_Refseq.$id;
 					}
-					
+
 					if($type eq "ProteinMutation" && $setup_hash{ProteinMutation} ne "False")
 					{
 						if($id=~/^[^\|]*\|([^\|]*)\|([^\|]*)\|([^\|]*)/)#c|T|799+2|A
@@ -464,8 +464,8 @@ sub OutputFormat_PubTator
 		}
 	}
 	close input;
-	
-	
+
+
 	open output,">".$PubTator_output;
 	my %printed_hash=();
 	foreach my $pmid (@pmidARR)

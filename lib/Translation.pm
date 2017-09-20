@@ -6,7 +6,7 @@
 
 package ME;
 
-use encoding 'big5', STDIN => 'big5', STDOUT => 'big5';
+use utf8;
 
 sub Translation_PubTator
 {
@@ -14,7 +14,7 @@ sub Translation_PubTator
 	my $CRF_output=$_[1];
 	my $location=$_[2];
 	my $PubTator_output=$_[3];
-	
+
 	my %sentence_hash=();
 	my %article_hash=();
 	my %TypeOrder_hash=();
@@ -61,7 +61,7 @@ sub Translation_PubTator
 		}
 	}
 	close input;
-	
+
 	my %output_hash=();
 	my $count=0;
 	open output,"<".$CRF_output;
@@ -72,7 +72,7 @@ sub Translation_PubTator
 		$output_hash{$count}=$tmp;
 		$count++;
 	}
-	
+
 	my %location_hash=();
 	$count=0;
 	open location,"<".$location;
@@ -83,13 +83,13 @@ sub Translation_PubTator
 		$location_hash{$count}=$location;
 		$count++;
 	}
-	
+
 	my %printSTR_hash=();
 	for(my $i=0;$i<$count;$i++)
 	{
 		my $output=$output_hash{$i};
 		my $location=$location_hash{$i};
-		
+
 		my $start=100000;
 		my $last=0;
 		my $pmid="";
@@ -131,7 +131,7 @@ sub Translation_PubTator
 				$output=$output_hash{$i};
 				$location=$location_hash{$i};
 				$prestate=$state;
-			}		
+			}
 
 			#identifier
 			my $identifier="";
@@ -163,7 +163,7 @@ sub Translation_PubTator
 			{
 				$identifier=$identifier_hash{"A"}."|".$identifier_hash{"W"}."|".$identifier_hash{"P"}."|".$identifier_hash{"M"};
 			}
-			
+
 			#Type (ProteinMutation|DNAMutation|SNP)
 			if($Type eq "")
 			{
@@ -192,8 +192,8 @@ sub Translation_PubTator
 					$Type="ProteinMutation";
 				}
 			}
-			
-			if( ( length($identifier_hash{"W"})==3 || length($identifier_hash{"M"})==3 ) 
+
+			if( ( length($identifier_hash{"W"})==3 || length($identifier_hash{"M"})==3 )
 				&& length($identifier_hash{"W"}) != length($identifier_hash{"M"})
 				&& $identifier_hash{"W"} ne "" && $identifier_hash{"M"} ne "" && $identifier_hash{"W"}!~/,/ && $identifier_hash{"M"}!~/,/
 				&& ($identifier_hash{"W"}!~/^[ATCG]+$/ || $identifier_hash{"M"}!~/^[ATCG]+$/
@@ -214,11 +214,11 @@ sub Translation_PubTator
 				$i--;
 			}
 			$mention_tmp="";
-		}		
+		}
 	}
 	close output;
 	close location;
-	
+
 	open output,">".$PubTator_output;
 	my %printed_hash=();
 	foreach my $pmid (@pmidARR)

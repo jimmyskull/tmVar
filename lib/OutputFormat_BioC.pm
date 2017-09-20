@@ -11,7 +11,7 @@ BEGIN {
 }
 use BioC_full;
 
-use encoding 'big5', STDIN => 'big5', STDOUT => 'big5';
+use utf8;
 
 sub OutputFormat_BioC
 {
@@ -20,7 +20,7 @@ sub OutputFormat_BioC
 	my $CRF_output=$_[2];
 	my $BioC_output=$_[3];
 	my $setup=$_[4];
-	
+
 	my %setup_hash=();
 	if($setup eq ""){$setup="setup.txt";}
 	open input,"<".$setup;
@@ -35,7 +35,7 @@ sub OutputFormat_BioC
 	}
 	close input;
 
-	
+
 	my %output_hash=();
 	my $count=0;
 	open input,"<".$CRF_output;
@@ -47,7 +47,7 @@ sub OutputFormat_BioC
 		$count++;
 	}
 	close input;
-	
+
 	my %STR_hash=();
 	my $str_count=1;
 	for(my $i=0;$i<$count;$i++)
@@ -56,7 +56,7 @@ sub OutputFormat_BioC
 		my $mention_tmp="";
 		my %identifier_hash=();
 		my $prestate="";
-		
+
 		my $keepi=$i;
 		my $MW_right=0;
 		my $MW_left=10000;
@@ -77,7 +77,7 @@ sub OutputFormat_BioC
 			$keepi++;
 			$output=$output_hash{$keepi};
 		}
-		
+
 		my $boundary=0;
 		my $WMstate="F";	#Forward
 		if($mention_tmp=~/^(.+?)(FOR|INPLACEOF|INSTEADOF|MUTANTOF|MUTANTSOF|RATHERTHAN|RATHERTHAN|REPLACEMENTOF|REPLACEMENTSOF|REPLACES|REPLACING|RESIDUEATPOSITION|RESIDUEFOR|RESIDUEINPLACEOF|RESIDUEINSTEADOF|SUBSTITUTIONAT|SUBSTITUTIONFOR|SUBSTITUTIONOF|SUBSTITUTIONSAT|SUBSTITUTIONSFOR|SUBSTITUTIONSOF|SUBSTITUTEDFOR|TOREPLACE)(.+)$/
@@ -92,7 +92,7 @@ sub OutputFormat_BioC
 		}
 		$mention_tmp="";
 		my $start=0;
-		
+
 		$output=$output_hash{$i};
 		while($output=~/^([^\t]+).*([ATPWMFSDIR])$/)
 		{
@@ -110,7 +110,7 @@ sub OutputFormat_BioC
 				{
 					if($start<=$boundary){$state="M";}
 					else{$state="W";}
-				}				
+				}
 				if($state ne $prestate && $identifier_hash{$state} ne "")
 				{
 					$identifier_hash{$state}=$identifier_hash{$state}.",".$mention;
@@ -135,22 +135,22 @@ sub OutputFormat_BioC
 			$output=$output_hash{$i};
 			$prestate=$state;
 			$start=$start+length($mention);
-		}		
-		
+		}
+
 		my $translate="";
 		my $NotAaminoacid="";
-		
+
 		my %nametothree = (GUANINE => "G", ADENINE => "A", CYTOSINE => "C", THYMINE => "T", ALANINE => "ALA", ALANINE => "ALA", ALANINE => "ALA", ALANINE => "ALA", ALANINE => "ALA", ARGININE => "ARG", ASPARAGINE => "ASN", "ASPARTICACID" => "ASP", "ASPARTATE" => "ASP", CYSTEINE => "CYS", GLUTAMINE => "GLN", "GLUTAMICACID" => "GLU", GLYCINE => "GLY", HISTIDINE => "HIS", ISOLEUCINE => "ILE", LEUCINE => "LEU", LYSINE => "LYS", METHIONINE => "MET", PHENYLALANINE => "PHE", PROLINE => "PRO", SERINE => "SER", THREONINE => "THR", TRYPTOPHAN => "TRP", TYROSINE => "TYR", VALINE => "VAL", STOP => "XAA");
 		my %threetone = (ALA => "A", ARG => "R", ASN => "N", ASP => "D", CYS => "C", GLN => "Q", GLU => "E", GLY => "G", HIS => "H", ILE => "I", LEU => "L", LYS => "K", MET => "M", PHE => "F", PRO => "P", SER => "S", THR => "T", TRP => "W", TYR => "Y", VAL => "V", ASX => "B", GLX => "Z", XAA => "X",TER => "X");
-		
+
 		my @tmp=split(",",$identifier_hash{"M"});
 		$identifier_hash{"M"}="";
 		foreach my $tmp (@tmp)
 		{
-			if(exists $nametothree{$tmp})	
+			if(exists $nametothree{$tmp})
 			{
 				$tmp=$nametothree{$tmp};
-				$translate="Y";	
+				$translate="Y";
 			}
 			if($identifier_hash{"M"} eq ""){$identifier_hash{"M"}=$tmp;}
 			else{$identifier_hash{"M"}=$identifier_hash{"M"}.",".$tmp;}
@@ -159,10 +159,10 @@ sub OutputFormat_BioC
 		$identifier_hash{"M"}="";
 		foreach my $tmp (@tmp)
 		{
-			if(exists $threetone{$tmp})	
-			{	
+			if(exists $threetone{$tmp})
+			{
 				$tmp=$threetone{$tmp};
-				$translate="Y";	
+				$translate="Y";
 			}
 			elsif(length($tmp)>1)
 			{
@@ -171,15 +171,15 @@ sub OutputFormat_BioC
 			if($identifier_hash{"M"} eq ""){$identifier_hash{"M"}=$tmp;}
 			else{$identifier_hash{"M"}=$identifier_hash{"M"}.",".$tmp;}
 		}
-			
+
 		my @tmp=split(",",$identifier_hash{"W"});
 		$identifier_hash{"W"}="";
 		foreach my $tmp (@tmp)
 		{
-			if(exists $nametothree{$tmp})	
+			if(exists $nametothree{$tmp})
 			{
 				$tmp=$nametothree{$tmp};
-				$translate="Y";	
+				$translate="Y";
 			}
 			if($identifier_hash{"W"} eq ""){$identifier_hash{"W"}=$tmp;}
 			else{$identifier_hash{"W"}=$identifier_hash{"W"}.",".$tmp;}
@@ -188,10 +188,10 @@ sub OutputFormat_BioC
 		$identifier_hash{"W"}="";
 		foreach my $tmp (@tmp)
 		{
-			if(exists $threetone{$tmp})	
-			{	
+			if(exists $threetone{$tmp})
+			{
 				$tmp=$threetone{$tmp};
-				$translate="Y";	
+				$translate="Y";
 			}
 			elsif(length($tmp)>1)
 			{
@@ -200,15 +200,15 @@ sub OutputFormat_BioC
 			if($identifier_hash{"W"} eq ""){$identifier_hash{"W"}=$tmp;}
 			else{$identifier_hash{"W"}=$identifier_hash{"W"}.",".$tmp;}
 		}
-		
-		
+
+
 		if($identifier_hash{"A"} eq "CDNA"){	$identifier_hash{"A"}="c";	}
 		elsif($identifier_hash{"P"}=~/^[\+\-]/ && $identifier_hash{"A"} eq ""){	$identifier_hash{"A"}="c";	}
 		$identifier_hash{"A"}=lc($identifier_hash{"A"});
 		$identifier_hash{"F"}=~s/\*/X/g;
 		$identifier_hash{"R"}=lc($identifier_hash{"R"});
 		$identifier_hash{"R"}=~s/[\[\]]//g;
-		
+
 		if($identifier_hash{"P"}=~/^([0-9]+)\-([0-9]+)$/)
 		{
 			if($2>$1)
@@ -220,7 +220,7 @@ sub OutputFormat_BioC
 		elsif($identifier_hash{"T"} eq "DELINS") {$identifier_hash{"T"}="INDEL";	$translate="N";}
 		elsif($identifier_hash{"T"}=~/INS.*DEL/) {$identifier_hash{"T"}="INDEL";	$translate="N";}
 		elsif($identifier_hash{"T"}=~/DEL.*INS/) {$identifier_hash{"T"}="INDEL";	$translate="N";}
-		
+
 		if($identifier_hash{"W"}=~/(.+),(.+)/ && ($identifier_hash{"M"} eq "" && $identifier_hash{"T"} eq ""))
 		{
 			$identifier_hash{"W"}=$1;
@@ -231,11 +231,11 @@ sub OutputFormat_BioC
 			$identifier_hash{"W"}=$1;
 			$identifier_hash{"M"}=$2;
 		}
-		
+
 		$identifier_hash{"P"}=~s/[\-\[]+$//g;
 		$identifier_hash{"P"}=~s/^(POSITION|NUCLEOTIDE|\:)//g;
 		if($Type eq "ProteinMutation"){$identifier_hash{"P"}=~s/^CODON//g;}
-		
+
 		if($identifier_hash{"M"}=~/(DEL|INS|DUP)/)
 		{
 			$identifier_hash{"T"}=$identifier_hash{"M"};
@@ -246,7 +246,7 @@ sub OutputFormat_BioC
 			$identifier_hash{"T"}=$identifier_hash{"W"};
 			$identifier_hash{"W"}="";
 		}
-		
+
 		#identifier
 		my $Type="";
 		my $identifier="";
@@ -279,7 +279,7 @@ sub OutputFormat_BioC
 		{
 			$identifier=$identifier_hash{"A"}."|SUB|".$identifier_hash{"W"}."|".$identifier_hash{"P"}."|".$identifier_hash{"M"};
 		}
-		
+
 		#Type (ProteinMutation|DNAMutation|SNP)
 		if($Type eq "")
 		{
@@ -313,13 +313,13 @@ sub OutputFormat_BioC
 			elsif($identifier_hash{"A"}=~/p/)
 			{
 				$Type="ProteinMutation";
-			}	
+			}
 		}
 		if($Type eq "ProteinMutation")
 		{
 			$identifier=~s/^[^\|]*\|/p\|/g;
 		}
-		
+
 		if(($identifier_hash{"M"} eq $identifier_hash{"W"}) && ($identifier_hash{"W"} ne "") && $Type eq "DNAMutation") # remove genotype
 		{
 		}
@@ -341,7 +341,7 @@ sub OutputFormat_BioC
 		}
 		$str_count++;
 	}
-		
+
 	my %sentence_hash=();
 	my %article_hash=();
 	my %printSTR_hash=();
@@ -397,7 +397,7 @@ sub OutputFormat_BioC
 					{
 						$id=$Infer_Refseq.$id;
 					}
-					
+
 					if($type eq "ProteinMutation" && $setup_hash{ProteinMutation} ne "False")
 					{
 						if($id=~/^[^\|]*\|([^\|]*)\|([^\|]*)\|([^\|]*)/)#c|T|799+2|A
@@ -470,7 +470,7 @@ sub OutputFormat_BioC
 		}
 	}
 	close input;
-	
+
 	my %mention_hash=();
 	my %mention2id_hash=();
 	my %mention2type_hash=();
@@ -493,12 +493,12 @@ sub OutputFormat_BioC
 			}
 		}
 	}
-	
+
 	#Read BioC
 	my $input_collection = new BioC_full::Collection();
 	my $input_xml = new BioC_full::Connector_libxml();
 	$input_xml->start_read($BioC_input, $input_collection);
-	
+
 	#Write BioC
 	my $annotation_collection = new BioC_full::Collection();	# create annotation collection object
 	my $annotate_xml = new BioC_full::Connector_libxml();	# create libxml Connector for output
@@ -506,7 +506,7 @@ sub OutputFormat_BioC
 	$annotation_collection ->{date}=$input_collection->{date};
 	$annotation_collection ->{key}=$input_collection->{key};
 	$annotate_xml->start_write( $BioC_output, $annotation_collection );	# start to write contents of annotation collection to stdout
-	
+
 	my $document = new BioC_full::Document();
 	while ( $input_xml->read_next($document) ) # documents
 	{
@@ -520,10 +520,10 @@ sub OutputFormat_BioC
 			$psg->{infons}->set("type", $document->{passages}->get($i)->{infons}->get("type"));	# copy type information
 			$psg->{offset} = $document->{passages}->get($i)->{offset};	# copy offset element contents
 			$psg->{text} = $document->{passages}->get($i)->{text};	# copy text
-			
+
 			##====
 			##Added existed annotation from input to io
-			#for(my $j=0;$j<$document->{passages}->get($i)->{annotations}->size();$j++)	
+			#for(my $j=0;$j<$document->{passages}->get($i)->{annotations}->size();$j++)
 			#{
 			#	$psg->{annotations}->push( $document->{passages}->get($i)->{annotations}->get($j) );
 			#	$count++;
@@ -532,7 +532,7 @@ sub OutputFormat_BioC
 			#{
 			#	$psg->{relations}->push( $document->{passages}->get($i)->{relations}->get($j) );
 			#}
-			
+
 			#====
 			#insert entities into BioC pasaages
 			my @tmpMen = reverse sort {$mention_hash{$a} <=> $mention_hash{$b}} keys %mention_hash;
@@ -549,7 +549,7 @@ sub OutputFormat_BioC
 						my $pre=$1;
 						my $mention_tmp=$2;
 						my $post=$3;
-						
+
 						my $annotation = new BioC_full::Annotation(); #define annotation
 						$annotation->{id} = "".$count;
 						$annotation->{infons}->set("type", $mention2type_hash{$tmpMen});
@@ -557,7 +557,7 @@ sub OutputFormat_BioC
 						$annotation->add_location( (length($pre)+$psg->{offset}), length($mention) );
 						$annotation->{text} = $mention;
 						$psg->{annotations}->push( $annotation );	# can I use shift?
-						
+
 						$count++;
 						$mention_tmp=~s/./@/g;
 						$sentence=$pre.$mention_tmp.$post;
@@ -566,19 +566,19 @@ sub OutputFormat_BioC
 			}
 			$document_output->{passages}->push( $psg );
 		}
-		
+
 		##====
 		##Added existed annotation from input to io
 		#for(my $j=0;$j<$document->{relations}->size();$j++)
 		#{
 		#	$document_output->{relations}->push( $document->{relations}->get($j) );
 		#}
-		
+
 		$annotate_xml->write_next( $document_output );
 	}
-	
+
 	$annotate_xml->end_write();
-	
+
 	return 1;
 }
 return 1;

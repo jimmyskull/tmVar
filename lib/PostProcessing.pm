@@ -6,7 +6,7 @@
 
 package ME;
 
-use encoding 'big5', STDIN => 'big5', STDOUT => 'big5';
+use utf8;
 
 sub PostProcessing
 {
@@ -24,7 +24,7 @@ sub PostProcessing
 	my %mention_hash=();
 	my %type_hash=();
 	my %identifier_hash=();
-	
+
 	my $pmid="";
 	open input,"<".$input;
 	while(<input>)
@@ -58,7 +58,7 @@ sub PostProcessing
 		else
 		{
 			$article=" ".$article;
-			
+
 			#=====
 			#Split RSnumber
 			foreach my $posit (keys %mention_hash)
@@ -113,11 +113,11 @@ sub PostProcessing
 					delete $type_hash{$posit};
 				}
 			}
-			
+
 			#=====
 			#boundary
 			foreach my $posit(keys %mention_hash)
-			{	
+			{
 				my ($start,$last)=($posit=~/(.+)\t(.+)/);
 				my $mention=$mention_hash{$posit};
 				if($mention=~/^[0-9]/ && substr($article,$start,1)=~/([\-\+])/)	#17000021	251	258	1858C>T --> +1858C>T
@@ -198,8 +198,8 @@ sub PostProcessing
 					$identifier_hash{($start+1)."\t".($last-1)}=$identifier_hash{$posit};
 					delete $identifier_hash{$posit};
 				}
-			}			
-			
+			}
+
 			#=====
 			#Self-pattern
 			foreach my $posit(keys %mention_hash) #build pattern
@@ -220,7 +220,7 @@ sub PostProcessing
 					$type_pattern_hash{$mention_pattern}=$type_hash{$posit};
 				}
 			}
-			
+
 			#=====
 			#Append-pattern
 			my $countRegEx=1;
@@ -239,11 +239,11 @@ sub PostProcessing
 				}
 			}
 			close RegEx;
-			
+
 			#=====
-			#Extract mutation by pattern match	
+			#Extract mutation by pattern match
 			my @rank = sort {$mention_pattern_hash{$a} <=> $mention_pattern_hash{$b}} keys %mention_pattern_hash;
-			foreach my $mention_pattern(@rank) 
+			foreach my $mention_pattern(@rank)
 			{
 				my $article_tmp=$article;
 				while($article_tmp=~/^(.+[\W\-\_])($mention_pattern)([\W\-\_].+)$/ || $article_tmp=~/^(.+[\W\-\_a-z0-9])($mention_pattern)([\W\-\_].+)$/)
@@ -286,7 +286,7 @@ sub PostProcessing
 					}
 				}
 			}
-						
+
 			#=====
 			#filter short mention
 			foreach my $posit (keys %mention_hash)
@@ -298,7 +298,7 @@ sub PostProcessing
 					delete $type_hash{$posit};
 				}
 			}
-			
+
 			my %start_hash=();
 			foreach my $posit(keys %mention_hash)
 			{
@@ -312,17 +312,17 @@ sub PostProcessing
 				my $posit=$start_hash{$start};
 				$annotation_hash{$pmid}=$annotation_hash{$pmid}.$pmid."\t".$posit."\t".$mention_hash{$posit}."\t".$type_hash{$posit}."\t".$identifier_hash{$posit}."\n";
 			}
-			
+
 			%mention_pattern_hash=();
 			%type_pattern_hash=();
 			%mention_hash=();
 			%type_hash=();
 			%identifier_hash=();
-			$article="";		
+			$article="";
 		}
 	}
 	close input;
-	
+
 	open output,">".$output;
 	my %printed_hash=();
 	foreach my $pmid (@pmidlist)
@@ -354,14 +354,14 @@ sub ExtractStateFeature
 	my %RegEx_mention_hash=();
 	my %RegEx_type_hash=();
 	my %RegEx_result_hash=();
-	
+
 	my %Result_hash=();
 	my %locationmap_hash=();
 	my %lastmap_hash=();
 	my %mention_hash=();
 	my %type_hash=();
 	my %character_hash=();
-	
+
 	open output,">".$output;
 	my $mode_RegEx="";
 	while(<input>)
@@ -379,7 +379,7 @@ sub ExtractStateFeature
 			%mention_hash=();
 			%type_hash=();
 			%character_hash=();
-						
+
 			$pmid=$1;
 			$start=1;
 			$last=$3;
@@ -394,7 +394,7 @@ sub ExtractStateFeature
 				my @M=split(",",$4);
 				my @F=split(",",$5);
 				my @S=split(",",$6);
-				my $tmpmention=$mention; 
+				my $tmpmention=$mention;
 				foreach my $type(@type){	if($mention=~/^(.*?)($type)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="A";	}	}	}
 				foreach my $W(@W){	if($tmpmention=~/^(.*)($W)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="W"; my $str1=$1;my $str2=$2;my $str3=$3;$str2=~s/./@/g;$tmpmention=$str1.$str2.$str3;	}	}	}
 				foreach my $P(@P){	$P=~s/([\W\_\-])/\\$1/g;	if($tmpmention=~/^(.*)($P)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="P"; my $str1=$1;my $str2=$2;my $str3=$3;$str2=~s/./@/g;$tmpmention=$str1.$str2.$str3;	}	}	}
@@ -409,7 +409,7 @@ sub ExtractStateFeature
 				my @P=split(",",$3);
 				my @M=split(",",$4);
 				my @F=split(",",$5);
-				my $tmpmention=$mention; 
+				my $tmpmention=$mention;
 				foreach my $type(@type){	if($mention=~/^(.*?)($type)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="A";	}	}	}
 				foreach my $W(@W){	if($tmpmention=~/^(.*)($W)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="W"; my $str1=$1;my $str2=$2;my $str3=$3;$str2=~s/./@/g;$tmpmention=$str1.$str2.$str3;	}	}	}
 				foreach my $P(@P){	$P=~s/([\W\_\-])/\\$1/g;	if($tmpmention=~/^(.*)($P)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="P"; my $str1=$1;my $str2=$2;my $str3=$3;$str2=~s/./@/g;$tmpmention=$str1.$str2.$str3;	}	}	}
@@ -422,7 +422,7 @@ sub ExtractStateFeature
 				my @T=split(",",$2);
 				my @P=split(",",$4);
 				my @M=split(",",$5);
-				my $tmpmention=$mention; 
+				my $tmpmention=$mention;
 				foreach my $type(@type){	if($mention=~/^(.*?)($type)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="A";	}	}	}
 				foreach my $P(@P){	$P=~s/([\W\_\-])/\\$1/g;	if($tmpmention=~/^(.*)($P)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="P"; my $str1=$1;my $str2=$2;my $str3=$3;$str2=~s/./@/g;$tmpmention=$str1.$str2.$str3;	}	}	}
 				foreach my $T(@T){	if($tmpmention=~/^(.*?)($T)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="T"; my $str1=$1;my $str2=$2;my $str3=$3;$str2=~s/./@/g;$tmpmention=$str1.$str2.$str3;	}	}	}
@@ -434,7 +434,7 @@ sub ExtractStateFeature
 				my @W=split(",",$2);
 				my @P=split(",",$3);
 				my @M=split(",",$4);
-				my $tmpmention=$mention; 
+				my $tmpmention=$mention;
 				foreach my $type(@type){	if($mention=~/^(.*?)($type)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="A";	}	}	}
 				foreach my $W(@W){	if($tmpmention=~/^(.*)($W)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="W"; my $str1=$1;my $str2=$2;my $str3=$3;$str2=~s/./@/g;$tmpmention=$str1.$str2.$str3;	}	}	}
 				foreach my $P(@P){	$P=~s/([\W\_\-])/\\$1/g;	if($tmpmention=~/^(.*)($P)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="P"; my $str1=$1;my $str2=$2;my $str3=$3;$str2=~s/./@/g;$tmpmention=$str1.$str2.$str3;	}	}	}
@@ -447,15 +447,15 @@ sub ExtractStateFeature
 				my @P=split(",",$3);
 				my @M=split(",",$4);
 				my @D=split(",",$5);
-				my $tmpmention=$mention; 
+				my $tmpmention=$mention;
 				foreach my $type(@type){	if($mention=~/^(.*?)($type)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="A";	}	}	}
 				foreach my $P(@P){	$P=~s/([\W\_\-])/\\$1/g;	if($tmpmention=~/^(.*)($P)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="P"; my $str1=$1;my $str2=$2;my $str3=$3;$str2=~s/./@/g;$tmpmention=$str1.$str2.$str3;	}	}	}
 				foreach my $T(@T){	if($tmpmention=~/^(.*)($T)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="T"; my $str1=$1;my $str2=$2;my $str3=$3;$str2=~s/./@/g;$tmpmention=$str1.$str2.$str3;	}	}	}
 				foreach my $M(@M){	if($tmpmention=~/^(.*)($M)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="M"; my $str1=$1;my $str2=$2;my $str3=$3;$str2=~s/./@/g;$tmpmention=$str1.$str2.$str3;	}	}	}
 				foreach my $D(@D){
 					$D=~s/([\W\_\-])/\\$1/g;
-					if($mention=~/^(.*)($D)(.*)$/)	
-					{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="D";	}	}	
+					if($mention=~/^(.*)($D)(.*)$/)
+					{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="D";	}	}
 				}
 			}
 			elsif($identifier=~/^((rs|RS|Rs|reference SNP no\. )[0-9]+)$/i)
@@ -463,11 +463,11 @@ sub ExtractStateFeature
 				my @RS=split(",",$1);
 				foreach my $RS(@RS){	if($mention=~/^(.*)($RS)(.*)$/)	{	for(my $i=length($1);$i<(length($1)+length($2));$i++){$character_hash{$i}="R";	}	}	}
 			}
-			
+
 			#=====
 			#Start state:I
-			print output "I I I I I I I I I I I I I I I I I I\n";	
-			
+			print output "I I I I I I I I I I I I I I I I I I\n";
+
 			#=====
 			#Translate all tokens to states
 			my $tmp=$mention;
@@ -477,38 +477,38 @@ sub ExtractStateFeature
 				my $pre=$1;
 				my $post=$2;
 				my $end=length($pre)+$start;
-				
+
 				if ($pre ne " ")
 				{
 					my $state="I";
 					if (exists $character_hash{$end-1}){$state=$character_hash{$end-1};}
-					
+
 					my $token=$pre;
-					
-					#Number of Numbers [0-9] 
+
+					#Number of Numbers [0-9]
 					my $tmp=$token;
 					$tmp=~s/[^0-9]//g;
 					my $Num_num="";
 					if(length($tmp)>2){$Num_num="N:3+";}elsif(length($tmp)<=2 && length($tmp)>=1){$Num_num="N:1-2";}else{$Num_num="N:".length($tmp);}
-					
+
 					#Number of Uppercase [A-Z]
 					$tmp=$token;
 					$tmp=~s/[^A-Z]//g;
 					my $Num_Uc="";
 					if(length($tmp)>3){$Num_Uc="U:3+";}elsif(length($tmp)<=2 && length($tmp)>=1){$Num_Uc="N:1-2";}else{$Num_Uc="U:".length($tmp);}
-					
+
 					#Number of Lowercase [a-z]
 					$tmp=$token;
 					$tmp=~s/[^a-z]//g;
 					my $Num_Lc="";
 					if(length($tmp)>3){$Num_Lc="L:3+";}elsif(length($tmp)<=2 && length($tmp)>=1){$Num_Lc="N:1-2";}else{$Num_Lc="L:".length($tmp);}
-					
+
 					#Number of ALL char
 					$tmp=$token;
 					$tmp=~s/[^a-z]//g;
 					my $Num_All="";
 					if(length($tmp)>3){$Num_All="A:3+";}elsif(length($tmp)<=2 && length($tmp)>=1){$Num_All="N:1-2";}else{$Num_All="A:".length($tmp);}
-					
+
 					#specific character (;:,.->+_)
 					$tmp=$token;
 					my $SpecificC="";
@@ -518,13 +518,13 @@ sub ExtractStateFeature
 					elsif($tmp=~/[\[\]]/){$SpecificC="-SpecificC4-";}
 					elsif($tmp=~/[\\\/]/){$SpecificC="-SpecificC5-";}
 					else{$SpecificC="__nil__";}
-					
+
 					#mutation level
 					my $Mlevel="";
 					if($token eq "p"){$Mlevel="-ProteinLevel-";}
 					elsif($token=~/^[cgmr]$/){$Mlevel="-DNALevel-";}
 					else{$Mlevel="__nil__";}
-					
+
 					#mutation type
 					$tmp=$token;
 					my $lc_tmp=lc($tmp);
@@ -535,7 +535,7 @@ sub ExtractStateFeature
 					elsif($lc_tmp eq "\/" && substr($mention,$i-3,3)=~/(ins|del)/i && substr($mention,$i+1,3)=~/(ins|del)/i){$Mtype="-Mtype- -MtypeTri-";}
 					elsif(substr($mention,$i-1,2) eq "\/\\" || substr($mention,$i,2) eq "\/\\"){$Mtype="-Mtype- -MtypeTri-";}
 					else{$Mtype="__nil__ __nil__";}
-								
+
 					#DNA symbols
 					$tmp=$token;
 					my $lc_tmp=lc($tmp);
@@ -544,7 +544,7 @@ sub ExtractStateFeature
 					elsif($lc_tmp=~/^(denine|uanine|hymine|ytosine)$/){$DNASym="-DNASym- -DNASymFull_suffix-";}
 					elsif($lc_tmp=~/^[atcgu]+$/){$DNASym="-DNASym- -DNASymChar-";}
 					else{$DNASym="__nil__ __nil__";}
-					
+
 					#Protein symbols
 					my $uc_tmp=$token;
 					my $lc_tmp=lc($token);
@@ -556,7 +556,7 @@ sub ExtractStateFeature
 					elsif($token=~/^[CISQMNPKDTFAGHLRWVEYX]$/ && $next!~/^[ylsrhpieraYLSRHPIERA]$/){$ProteinSym="-ProteinSym- -ProteinSymChar-";}
 					elsif($token=~/^[CISGMPLTHAVF]$/ && $next=~/^[ylsrhpieraYLSRHPIERA]$/){$ProteinSym="-ProteinSym- -ProteinSymChar-";}
 					else{$ProteinSym="__nil__ __nil__";}
-					
+
 					#IVS/EX
 					$tmp=$token;
 					my $lc_tmp=lc($tmp);
@@ -565,7 +565,7 @@ sub ExtractStateFeature
 					elsif($tmp eq "E" && substr($mention,$i+1,1) eq "x"){$IVSEX="-IVSEX-";}
 					elsif(substr($mention,$i-1,1) eq "E" && $tmp eq "x"){$IVSEX="-IVSEX-";}
 					else{$IVSEX="__nil__";}
-					
+
 					#FSX feature
 					$tmp=$token;
 					my $lc_tmp=lc($tmp);
@@ -573,27 +573,27 @@ sub ExtractStateFeature
 					if($lc_tmp=~/^(fs|fsx|x|\*)$/){$FSXfeature="-FSX-";}
 					elsif(substr($mention,$i-1,1)=~/[sS]/ && $tmp eq "X"){$FSXfeature="-FSX-";}
 					else{$FSXfeature="__nil__";}
-					
+
 					#position type
 					$tmp=$token;
 					my $lc_tmp=lc($tmp);
 					my $PositionType="";
 					if($lc_tmp=~/^(nucleotide|codon|amino|acid|position|bp|b)$/){$PositionType="-PositionType-";}
 					else{$PositionType="__nil__";}
-					
+
 					#sequence location
 					$tmp=$token;
 					my $lc_tmp=lc($tmp);
 					my $SeqLocat="";
 					if($lc_tmp=~/^(intron|exon|promoter|utr)$/){$SeqLocat="-SeqLocat-";}
 					else{$SeqLocat="__nil__";}
-								
+
 					#RS
 					$tmp=lc($token);
 					my $RScode="";
 					if($tmp eq "rs"){$RScode="-RScode-";}
 					else{$RScode="__nil__";}
-					
+
 					my $result="";
 					if($wildtype ne "" && $i>=$wildtype_start && $i<$wildtype_last)
 					{
@@ -615,8 +615,8 @@ sub ExtractStateFeature
 					{
 						$result="O";
 					}
-					
-					print output "$token $Num_num $Num_Uc $Num_Lc $Num_All $SpecificC $Mlevel $Mtype $DNASym $ProteinSym $IVSEX $FSXfeature $PositionType $SeqLocat $RScode\n";	
+
+					print output "$token $Num_num $Num_Uc $Num_Lc $Num_All $SpecificC $Mlevel $Mtype $DNASym $ProteinSym $IVSEX $FSXfeature $PositionType $SeqLocat $RScode\n";
 
 				}
 				$tmp=$post;
@@ -634,9 +634,9 @@ sub ExtractStateFeature
 	}
 	close input;
 	close output;
-	
-	open(CRF,"|./CRF/crf_test -m CRF/ComponentExtraction.Model -o tmp/".$filename.".PostME.output tmp/".$filename.".PostME.data")|| die ("can't open\n");	close(CRF);
-	
+
+	open(CRF,"|crf_test -m CRF/ComponentExtraction.Model -o tmp/".$filename.".PostME.output tmp/".$filename.".PostME.data")|| die ("can't open\n");	close(CRF);
+
 	return 1;
 }
 return 1;

@@ -11,7 +11,7 @@ BEGIN {
 }
 use BioC_full;
 
-use encoding 'big5', STDIN => 'big5', STDOUT => 'big5';
+use utf8;
 
 sub Translation_BioC
 {
@@ -19,17 +19,17 @@ sub Translation_BioC
 	my $CRF_output=$_[1];
 	my $location=$_[2];
 	my $PubTator_output=$_[3];
-	
+
 	my %sentence_hash=();
 	my %article_hash=();
 	my %TypeOrder_hash=();
 	my @pmidARR;
 	my $BioC_text="";
-	
+
 	my $input_collection = new BioC_full::Collection();
 	my $input_xml = new BioC_full::Connector_libxml();
 	$input_xml->start_read($PubTator_intput, $input_collection);
-	
+
 	my $document = new BioC_full::Document();
 	while ( $input_xml->read_next($document) ) # documents
 	{
@@ -43,11 +43,11 @@ sub Translation_BioC
 			$sentence_hash{$pmid."\t".$type."_".$offset}=$sentence;
 			$article_hash{$pmid}=$article_hash{$pmid}.$sentence." ";
 			$TypeOrder_hash{$pmid}=$TypeOrder_hash{$pmid}.$type."_".$offset."\t";
-			
+
 			push(@pmidARR,$pmid);
 		}
 	}
-	
+
 	my %output_hash=();
 	my $count=0;
 	open output,"<".$CRF_output;
@@ -58,7 +58,7 @@ sub Translation_BioC
 		$output_hash{$count}=$tmp;
 		$count++;
 	}
-	
+
 	my %location_hash=();
 	$count=0;
 	open location,"<".$location;
@@ -69,13 +69,13 @@ sub Translation_BioC
 		$location_hash{$count}=$location;
 		$count++;
 	}
-	
+
 	my %printSTR_hash=();
 	for(my $i=0;$i<$count;$i++)
 	{
 		my $output=$output_hash{$i};
 		my $location=$location_hash{$i};
-		
+
 		my $start=100000;
 		my $last=0;
 		my $pmid="";
@@ -117,7 +117,7 @@ sub Translation_BioC
 				$output=$output_hash{$i};
 				$location=$location_hash{$i};
 				$prestate=$state;
-			}		
+			}
 
 			#identifier
 			my $identifier="";
@@ -149,7 +149,7 @@ sub Translation_BioC
 			{
 				$identifier=$identifier_hash{"A"}."|".$identifier_hash{"W"}."|".$identifier_hash{"P"}."|".$identifier_hash{"M"};
 			}
-			
+
 			#Type (ProteinMutation|DNAMutation|SNP)
 			if($Type eq "")
 			{
@@ -178,8 +178,8 @@ sub Translation_BioC
 					$Type="ProteinMutation";
 				}
 			}
-			
-			if( ( length($identifier_hash{"W"})==3 || length($identifier_hash{"M"})==3 ) 
+
+			if( ( length($identifier_hash{"W"})==3 || length($identifier_hash{"M"})==3 )
 				&& length($identifier_hash{"W"}) != length($identifier_hash{"M"})
 				&& $identifier_hash{"W"} ne "" && $identifier_hash{"M"} ne "" && $identifier_hash{"W"}!~/,/ && $identifier_hash{"M"}!~/,/
 				&& ($identifier_hash{"W"}!~/^[ATCG]+$/ || $identifier_hash{"M"}!~/^[ATCG]+$/
@@ -200,11 +200,11 @@ sub Translation_BioC
 				$i--;
 			}
 			$mention_tmp="";
-		}		
+		}
 	}
 	close output;
 	close location;
-	
+
 	open output,">".$PubTator_output;
 	my %printed_hash=();
 	foreach my $pmid (@pmidARR)
